@@ -1,3 +1,4 @@
+import { ErrorDesc } from './types';
 import move from './move';
 
 describe('move', () => {
@@ -53,7 +54,7 @@ describe('move', () => {
       { id: '3', name: 'Folder 2', files: [] },
     ];
 
-    expect(() => move(list, '3', '1')).toThrow('You cannot move a folder');
+    expect(() => move(list, '3', '1')).toThrow(ErrorDesc.CantMoveFolder);
   });
 
   it('throws error if given destination is not a folder', () => {
@@ -66,7 +67,7 @@ describe('move', () => {
       { id: '3', name: 'Folder 2', files: [{ id: '4', name: 'File 2' }] },
     ];
 
-    expect(() => move(list, '2', '4')).toThrow('You cannot specify a file as the destination');
+    expect(() => move(list, '2', '4')).toThrow(ErrorDesc.DestinationNotFound);
   });
 
   it('throws error if given source not found', () => {
@@ -79,6 +80,19 @@ describe('move', () => {
       { id: '3', name: 'Folder 2', files: [{ id: '4', name: 'File 2' }] },
     ];
 
-    expect(() => move(list, '5', '3')).toThrow('Given source file not found');
+    expect(() => move(list, '5', '3')).toThrow(ErrorDesc.SourceNotFound);
+  });
+
+  it('throws error if given source in same destination', () => {
+    const list = [
+      {
+        id: '1',
+        name: 'Folder 1',
+        files: [{ id: '2', name: 'File 1' }],
+      },
+      { id: '3', name: 'Folder 2', files: [{ id: '4', name: 'File 2' }] },
+    ];
+
+    expect(() => move(list, '2', '1')).toThrow(ErrorDesc.InSomeDestination);
   });
 });
